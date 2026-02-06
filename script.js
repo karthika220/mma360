@@ -50,13 +50,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (testimonials.length) updateTestimonial();
 
     // Call Buttons
-    document.querySelectorAll('.btn-primary,.phone-btn,.floating-btn-left').forEach(btn => {
+    document.querySelectorAll('.btn-primary,.phone-btn,.floating-btn-left,.cta-btn').forEach(btn => {
         btn.onclick = () => window.location.href = "tel:+918148490360";
     });
 
     // WhatsApp Buttons
     document.querySelectorAll('.floating-btn-right,.whatsapp-btn').forEach(btn => {
-        btn.onclick = () => window.open("https://wa.me/918148490380", "_blank");
+        btn.onclick = () => window.open("https://wa.me/918148490360", "_blank");
+    });
+
+    // Contact Us Button
+    document.querySelectorAll('.contact-btn').forEach(btn => {
+        btn.onclick = () => window.location.href = "tel:+918148490360";
     });
 
 
