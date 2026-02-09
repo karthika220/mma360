@@ -15,6 +15,84 @@
     box-sizing: border-box;
 }
 
+/* Remove all focus outlines and editable indicators */
+*:focus,
+*:focus-visible,
+*:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+[contenteditable] {
+    outline: none !important;
+    border: none !important;
+}
+
+[contenteditable]:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove focus outlines from all interactive elements */
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit !important;
+}
+
+/* Hide caret cursor (text cursor) on all elements */
+* {
+    caret-color: transparent;
+}
+
+/* Allow text selection but hide caret */
+h1, h2, h3, h4, h5, h6,
+p, span, div, li {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    caret-color: transparent;
+    cursor: default;
+}
+
+/* Buttons and links - no text selection, pointer cursor */
+button, a, .btn-primary, .cta-btn, .book-btn, .whatsapp-btn, .contact-btn, .explore-btn,
+.nav-menu a, .floating-btn-left, .floating-btn-right {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    caret-color: transparent;
+    cursor: pointer;
+}
+
+/* Input fields - allow text selection and show caret */
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    caret-color: #FF5722;
+}
+
+[contenteditable="true"],
+[contenteditable="false"] {
+    outline: none !important;
+    border: none !important;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: #000;
@@ -203,6 +281,49 @@ p, span, a, li, label, input, textarea, button {
 .highlight {
     color: #FF5722;
     font-family: 'Teko', sans-serif;
+    position: relative;
+}
+
+/* Remove any slash lines or decorative vertical lines everywhere */
+.highlight::before,
+.highlight::after,
+.hero-banner-content h1::before,
+.hero-banner-content h1::after,
+.hero-banner-content h1 .highlight::before,
+.hero-banner-content h1 .highlight::after,
+h1::before,
+h1::after,
+h2::before,
+h2::after,
+h3::before,
+h3::after,
+h4::before,
+h4::after,
+h5::before,
+h5::after,
+h6::before,
+h6::after {
+    display: none !important;
+    content: none !important;
+    border: none !important;
+    background: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Remove any vertical lines or borders from headings and highlights */
+.highlight,
+.hero-banner-content h1,
+.hero-banner-content h1 .highlight,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    border-left: none !important;
+    border-right: none !important;
 }
 
 /* Hero Section */

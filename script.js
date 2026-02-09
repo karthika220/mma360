@@ -1,5 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Initialize dataLayer for GTM
+    window.dataLayer = window.dataLayer || [];
+    
+    // Helper function to push conversion events to dataLayer
+    function pushConversionEvent(eventName, eventParams) {
+        const eventData = {
+            'event': eventName,
+            'event_category': eventParams.category || 'Conversion',
+            'event_label': eventParams.label || '',
+            'value': eventParams.value || 1,
+            'currency': 'INR',
+            ...eventParams
+        };
+        window.dataLayer.push(eventData);
+        // Production: Console log removed for performance
+    }
+
     // Smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -21,15 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Contact Form
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', e => {
-            e.preventDefault();
-            alert("Thank you! We’ll call you shortly.");
-            contactForm.reset();
-        });
-    }
 
     // Testimonials
     let current = 0;
@@ -49,35 +57,129 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (testimonials.length) updateTestimonial();
 
-    // Call Buttons
+    // Call Buttons - Track all call button clicks as one conversion event
     document.querySelectorAll('.btn-primary,.phone-btn,.floating-btn-left,.cta-btn').forEach(btn => {
-        btn.onclick = () => window.location.href = "tel:+918148490360";
+        btn.onclick = function(e) {
+            // Track phone call conversion event
+            pushConversionEvent('call_click', {
+                'category': 'Conversion',
+                'label': 'Phone Call Click',
+                'value': 1,
+                'phone_number': '+918148490360',
+                'button_type': this.className,
+                'button_text': this.textContent.trim() || this.innerText.trim()
+            });
+            // Small delay to ensure event is sent before navigation
+            setTimeout(() => {
+                window.location.href = "tel:+918148490360";
+            }, 100);
+        };
     });
 
-    // WhatsApp Buttons
-    document.querySelectorAll('.floating-btn-right,.whatsapp-btn').forEach(btn => {
-        btn.onclick = () => window.open("https://wa.me/918148490360", "_blank");
-    });
+    // WhatsApp Buttons - Track all WhatsApp button clicks as one conversion event
+    const whatsappButtons = document.querySelectorAll('.floating-btn-right,.whatsapp-btn');
+    if (whatsappButtons.length > 0) {
+        whatsappButtons.forEach(btn => {
+            btn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    // Track WhatsApp conversion event
+                    pushConversionEvent('whatsapp_click', {
+                        'category': 'Conversion',
+                        'label': 'WhatsApp Click',
+                        'value': 1,
+                        'phone_number': '918148490360',
+                        'button_type': this.className
+                    });
+                    // Small delay to ensure event is sent before navigation
+                    setTimeout(() => {
+                        window.open("https://wa.me/918148490360", "_blank");
+                    }, 100);
+                } catch (error) {
+                    // Fallback: still allow WhatsApp even if tracking fails
+                    window.open("https://wa.me/918148490360", "_blank");
+                }
+            };
+        });
+    }
 
-    // Contact Us Button
-    document.querySelectorAll('.contact-btn').forEach(btn => {
-        btn.onclick = () => window.location.href = "tel:+918148490360";
-    });
+    // Contact Us Button - Track as call conversion
+    const contactButtons = document.querySelectorAll('.contact-btn');
+    if (contactButtons.length > 0) {
+        contactButtons.forEach(btn => {
+            btn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    pushConversionEvent('call_click', {
+                        'category': 'Conversion',
+                        'label': 'Contact Us - Phone Call',
+                        'value': 1,
+                        'phone_number': '+918148490360',
+                        'button_type': 'contact-btn'
+                    });
+                    setTimeout(() => {
+                        window.location.href = "tel:+918148490360";
+                    }, 100);
+                } catch (error) {
+                    // Fallback: still allow call even if tracking fails
+                    window.location.href = "tel:+918148490360";
+                }
+            };
+        });
+    }
 
 
-    // Book Button
-    document.querySelector('.book-btn').onclick = () =>
-        document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+    // Book Button - Also tracked as call_click conversion
+    const bookBtn = document.querySelector('.book-btn');
+    if (bookBtn) {
+        bookBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                // Track as call conversion
+                pushConversionEvent('call_click', {
+                    'category': 'Conversion',
+                    'label': 'Book Appointment - Phone Call',
+                    'value': 1,
+                    'phone_number': '+918148490360',
+                    'button_type': 'book-btn',
+                    'button_text': 'Book Your Appointment'
+                });
+                setTimeout(() => {
+                    window.location.href = "tel:+918148490360";
+                }, 100);
+            } catch (error) {
+                // Fallback: still allow call even if tracking fails
+                window.location.href = "tel:+918148490360";
+            }
+        };
+    }
 
-    // Explore Button
-    document.querySelector('.explore-btn').onclick = () =>
-        document.querySelector('#programs').scrollIntoView({ behavior: 'smooth' });
+    // Explore Button - Track as engagement (not conversion)
+    const exploreBtn = document.querySelector('.explore-btn');
+    if (exploreBtn) {
+        exploreBtn.onclick = function(e) {
+            // Track engagement event (not a conversion)
+            window.dataLayer.push({
+                'event': 'explore_sessions',
+                'event_category': 'Engagement',
+                'event_label': 'Explore Sessions Click'
+            });
+            document.querySelector('#programs').scrollIntoView({ behavior: 'smooth' });
+        };
+    }
 
     // Navbar Scroll
-    window.addEventListener('scroll', () => {
-        document.querySelector('.navbar').style.background =
-            window.scrollY > 50 ? "rgba(0,0,0,.95)" : "#000";
-    });
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (navbar && navbar.style) {
+                navbar.style.background = window.scrollY > 50 ? "rgba(0,0,0,.95)" : "#000";
+            }
+        }, { passive: true });
+    }
 
     // Scroll Animations
     const observer = new IntersectionObserver(entries => {
